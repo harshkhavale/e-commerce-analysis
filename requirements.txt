@@ -1,0 +1,11 @@
+Flask
+python-dotenv
+mysql-connector-python
+pandas
+prophet
+faker
+pandas
+scikit-learn
+matplotlib
+seaborn
+numpy
