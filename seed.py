@@ -6,25 +6,28 @@ from datetime import datetime
 fake = Faker()
 
 def insert_brands(cursor):
-    brands = ["Nike", "Adidas", "Puma", "Bata", "Woodland", "Reebok", "Sketchers", "Campus", "Sparx", "Red Tape"]
+    brands = ["Amul", "Nestle", "Britannia", "Dabur", "Patanjali", "Mother Dairy", "Parle", "Tata", "Haldiram's", "Catch"]
     for brand in brands:
         cursor.execute("INSERT INTO BrandsTbl (BrandName) VALUES (%s)", (brand,))
 
 def insert_categories(cursor):
-    categories = ["Sneakers", "Running Shoes", "Sports Shoes", "Formal Shoes", "Casual Shoes", "Sandals", "Flip Flops", "Boots", "Loafers", "Slippers"]
+    categories = ["Fruits", "Vegetables", "Dairy Products", "Snacks", "Beverages", "Bakery", "Cereals", "Personal Care", "Household", "Frozen Foods"]
     for category in categories:
         cursor.execute("INSERT INTO CategoriesTbl (CategoryName) VALUES (%s)", (category,))
 
 def insert_products(cursor):
-    shoe_models = ["Air Zoom", "UltraBoost", "RS-X", "Comet Ride", "Trailblazer", "Cloudfoam", "Ignite", "ZoomX", "PowerStep", "FlexRide"]
+    product_names = [
+        "Banana", "Apple", "Tomato", "Onion", "Milk", "Paneer", "Bread", "Chips", "Soft Drink", "Basmati Rice",
+        "Toothpaste", "Shampoo", "Frozen Peas", "Yogurt", "Cookies", "Cooking Oil", "Masala Powder", "Ice Cream", "Energy Drink", "Salt Pack"
+    ]
     for i in range(100):
-        name = f"{random.choice(shoe_models)} {random.choice(['Men', 'Women'])} {random.choice(['Sneakers', 'Running Shoes', 'Loafers'])}"
-        price = round(random.uniform(1500, 6000), 2)
-        selling_price = round(price * random.uniform(0.85, 0.95), 2)
-        stock = random.randint(10, 200)
-        details = f"{name} crafted with breathable mesh and durable sole."
-        description = f"Experience comfort and style with the new {name}, designed for daily wear and active lifestyle."
-        highlights = ["Breathable Mesh", "Lightweight", "Anti-slip sole", "Cushioned footbed", "Shock absorbent"]
+        name = f"{random.choice(product_names)} - {random.choice(['500g', '1kg', '2L', '1L', '250g'])}"
+        price = round(random.uniform(20, 500), 2)
+        selling_price = round(price * random.uniform(0.9, 0.98), 2)
+        stock = random.randint(50, 500)
+        details = f"High quality {name} sourced fresh and hygienically packed."
+        description = f"Enjoy the rich taste and nutrition of {name}. Perfect for your daily needs."
+        highlights = ["Fresh", "Organic", "Premium Quality", "Hygienically Packed", "No Preservatives"]
         
         cursor.execute("""
             INSERT INTO ProductDataTbl (
@@ -68,7 +71,7 @@ def insert_cart(cursor, users):
             INSERT INTO UserCartTbl (ProductId, DateTime, Size, UserName)
             VALUES (%s, %s, %s, %s)
         """, (
-            random.randint(1, 100), fake.date_time_this_year(), random.choice(["6", "7", "8", "9", "10"]), username
+            random.randint(1, 100), fake.date_time_this_year(), None, username
         ))
 
 def insert_delivery(cursor, users):
@@ -81,7 +84,7 @@ def insert_delivery(cursor, users):
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             random.randint(1, 100), fake.date_time_this_year(), username, fake.address(),
-            fake.postcode(), fake.phone_number(), fake.name(), random.choice(["COD", "Online"]), random.choice(["6", "7", "8", "9", "10"])
+            fake.postcode(), fake.phone_number(), fake.name(), random.choice(["COD", "Online"]), None
         ))
 
 def insert_feedback(cursor):
@@ -90,7 +93,7 @@ def insert_feedback(cursor):
             INSERT INTO FeedbackTbl (name, email, message)
             VALUES (%s, %s, %s)
         """, (
-            fake.name(), fake.email(), fake.sentence(nb_words=10)
+            fake.name(), fake.email(), fake.sentence(nb_words=12)
         ))
 
 def insert_user_activity(cursor, user_map):
@@ -102,8 +105,8 @@ def insert_user_activity(cursor, user_map):
         user_id = user_map[username]
         product_id = random.choice(product_ids)
         activity_type = random.choice(activity_types)
-        quantity = random.randint(1, 2) if activity_type == "purchase" else None
-        amount_spent = round(random.uniform(1500, 5000), 2) if activity_type == "purchase" else None
+        quantity = random.randint(1, 5) if activity_type == "purchase" else None
+        amount_spent = round(random.uniform(20, 500), 2) if activity_type == "purchase" else None
 
         cursor.execute("""
             INSERT INTO UserActivityTbl (
@@ -130,7 +133,7 @@ def main():
         insert_user_activity(cursor, user_map)
 
         conn.commit()
-        print("✅ Realistic footwear data inserted with consistent user relations.")
+        print("✅ Grocery shop data inserted successfully!")
     except Exception as e:
         print("❌ Error inserting data:", e)
         conn.rollback()
